@@ -43,8 +43,8 @@ function dragNode( node
 					+ currentMatrix.b + ","
 					+ currentMatrix.c + ","
 					+ currentMatrix.d + ","
-					+ x + ","
-					+ y + ")";
+					+ (x-originalMatrix.a*point_init_par_rapport_node.x-originalMatrix.c*point_init_par_rapport_node.y) + ","
+					+ (y-originalMatrix.b*point_init_par_rapport_node.x-originalMatrix.d*point_init_par_rapport_node.y) + ")";
 }
 
 //______________________________________________________________________________________________________________________
