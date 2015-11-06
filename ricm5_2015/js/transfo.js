@@ -45,6 +45,9 @@ function dragNode( node
 					+ currentMatrix.d + ","
 					+ (x-originalMatrix.a*point_init_par_rapport_node.x-originalMatrix.c*point_init_par_rapport_node.y) + ","
 					+ (y-originalMatrix.b*point_init_par_rapport_node.x-originalMatrix.d*point_init_par_rapport_node.y) + ")";
+
+// voir sujet, les seuls inconnues sont e et f. on multiplie la matrice avec (x,y,1) ( coord img ) = (x',y',1) (coord ds page).
+// multiplication matricielle, tout bon.
 }
 
 //______________________________________________________________________________________________________________________
