@@ -316,7 +316,14 @@
 					 , originalMatrix, point_init_par_rapport_node
 					 , currentMatrix
 					 , x, y) {
-		// TO BE DONE
+	// TO BE DONE > ADD
+		node.style.transform = "matrix("
+						+ currentMatrix.a + ","
+						+ currentMatrix.b + ","
+						+ currentMatrix.c + ","
+						+ currentMatrix.d + ","
+						+ x + ","
+						+ y + ")";
 	}
 
 	//______________________________________________________________________________________________________________________
