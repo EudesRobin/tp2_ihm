@@ -75,6 +75,7 @@
 	//______________________________________________________________________________________________________________________
 	var automataRotoZoom = {
 		init	: function(conf) {
+					 conf.doublet = {};
 					 conf.touchesId = {};
 					 conf.state = "nothing";
 					 conf.node.dataset.confId = config.length;
@@ -95,6 +96,7 @@
 							, currentPoint	: transfo.getPoint(touch.pageX, touch.pageY)
 							};
 						 configOfTouchId[ touch.identifier ] = conf;
+						 conf.doublet[0]=touch.identifier;
 						 // Next state
 						 conf.state = "drag";
 						 conf.node.style.zIndex = zIndex++;
@@ -119,15 +121,17 @@
 							 break;
 						 case "press":
 							 console.log("drag press with", touch.identifier);
+					     conf.doublet[1]=touch.identifier;
 						 conf.originalMatrix	= transfo.getMatrixFromString( conf.node.style.transform );
 						 conf.originalMatrixInv	= conf.originalMatrix.inverse();
 						 conf.touchesId[touch.identifier] = {
 							  point : transfo.getPoint(touch.pageX, touch.pageY).matrixTransform( conf.originalMatrixInv ),
 							  currentPoint : transfo.getPoint(touch.pageX, touch.pageY)
 							};
-							 configOfTouchId[ touch.identifier ] = conf;
-							 conf.state = "rotozoom";
-							 break;
+							configOfTouchId[ touch.identifier ] = conf;
+
+							conf.state = "rotozoom";
+							break;
 						}
 					},
 		rotozoom: function(conf, event, touch) {
@@ -136,32 +140,30 @@
 					 console.log( "automataRotoZoom::rotozoom", conf, event);
 					 switch(event) {
 						 case "release":
-							 console.log("release -rotozoom", touch.identifier);
-							 delete configOfTouchId[touch.identifier];
-							 delete conf.touchesId[touch.identifier];
-						 	 conf.originalMatrix	= transfo.copyMatrix (conf.currentMatrix);
-						 	 conf.originalMatrixInv	= conf.originalMatrix.inverse();
-							 configOfTouchId[ touch.identifier ] = conf;
-							 conf.state = "drag";
-							 break;
+							console.log("release -rotozoom", touch.identifier);
+							delete configOfTouchId[touch.identifier];
+							delete conf.touchesId[touch.identifier];
+						 	conf.originalMatrix	= transfo.copyMatrix (conf.currentMatrix);
+						 	conf.originalMatrixInv	= conf.originalMatrix.inverse();
+							configOfTouchId[ touch.identifier ] = conf;
+							conf.state = "drag";
+							break;
 						 case "move":
-							 console.log("move - rotozoom", touch.identifier);
-							 conf.touchesId[touch.identifier].currentPoint.x = touch.pageX;
-							 conf.touchesId[touch.identifier].currentPoint.y = touch.pageY;
-							 
-
-							 transfo.rotoZoomNode( conf.node
-											 , conf.originalMatrix
-											 , conf.currentMatrix
-											 , conf.touchesId[0].point
-											 , conf.touchesId[0].currentPoint
-						 					 , conf.touchesId[1].point
-											 , conf.touchesId[1].currentPoint
-											 );
-							 break;
+							console.log("move - rotozoom", touch.identifier);
+							conf.touchesId[touch.identifier].currentPoint.x = touch.pageX;
+							conf.touchesId[touch.identifier].currentPoint.y = touch.pageY;
+							transfo.rotoZoomNode( conf.node
+											, conf.originalMatrix
+											, conf.currentMatrix
+											, conf.touchesId[conf.doublet[0]].point
+											, conf.touchesId[conf.doublet[0]].currentPoint
+						 					, conf.touchesId[conf.doublet[1]].point
+											, conf.touchesId[conf.doublet[1]].currentPoint
+											);
+							break;
 						 case "press":
 						 	console.log("3e press - rotozoom - nothing to do", touch.identifier);
-							 break;
+							break;
 						}
 					}
 	};
