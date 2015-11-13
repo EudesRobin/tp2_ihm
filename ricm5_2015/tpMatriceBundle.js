@@ -100,7 +100,6 @@
 						 conf.node.style.zIndex = zIndex++;
 					},
 		drag	: function(conf, event, touch) {
-					 // TO BE DONE
 					 switch(event) {
 						 case "release":
 							 console.log("drag release of", touch.identifier);
@@ -120,15 +119,50 @@
 							 break;
 						 case "press":
 							 console.log("drag press with", touch.identifier);
-							 
+						 conf.originalMatrix	= transfo.getMatrixFromString( conf.node.style.transform );
+						 conf.originalMatrixInv	= conf.originalMatrix.inverse();
+						 conf.touchesId[touch.identifier] = {
+							  point : transfo.getPoint(touch.pageX, touch.pageY).matrixTransform( conf.originalMatrixInv ),
+							  currentPoint : transfo.getPoint(touch.pageX, touch.pageY)
+							};
 							 configOfTouchId[ touch.identifier ] = conf;
 							 conf.state = "rotozoom";
 							 break;
 						}
 					},
 		rotozoom: function(conf, event, touch) {
-					 // TO BE DONE
+		//TODO
+
 					 console.log( "automataRotoZoom::rotozoom", conf, event);
+					 switch(event) {
+						 case "release":
+							 console.log("release -rotozoom", touch.identifier);
+							 delete configOfTouchId[touch.identifier];
+							 delete conf.touchesId[touch.identifier];
+						 	 conf.originalMatrix	= transfo.copyMatrix (conf.currentMatrix);
+						 	 conf.originalMatrixInv	= conf.originalMatrix.inverse();
+							 configOfTouchId[ touch.identifier ] = conf;
+							 conf.state = "drag";
+							 break;
+						 case "move":
+							 console.log("move - rotozoom", touch.identifier);
+							 conf.touchesId[touch.identifier].currentPoint.x = touch.pageX;
+							 conf.touchesId[touch.identifier].currentPoint.y = touch.pageY;
+							 
+
+							 transfo.rotoZoomNode( conf.node
+											 , conf.originalMatrix
+											 , conf.currentMatrix
+											 , conf.touchesId[0].point
+											 , conf.touchesId[0].currentPoint
+						 					 , conf.touchesId[1].point
+											 , conf.touchesId[1].currentPoint
+											 );
+							 break;
+						 case "press":
+						 	console.log("3e press - rotozoom - nothing to do", touch.identifier);
+							 break;
+						}
 					}
 	};
 
@@ -315,7 +349,6 @@
 					 , originalMatrix, point_init_par_rapport_node
 					 , currentMatrix
 					 , x, y) {
-	// TO BE DONE > ADD
 		node.style.transform = "matrix("
 						+ currentMatrix.a + ","
 						+ currentMatrix.b + ","
@@ -323,6 +356,9 @@
 						+ currentMatrix.d + ","
 						+ (x-originalMatrix.a*point_init_par_rapport_node.x-originalMatrix.c*point_init_par_rapport_node.y) + ","
 						+ (y-originalMatrix.b*point_init_par_rapport_node.x-originalMatrix.d*point_init_par_rapport_node.y) + ")";
+
+	// voir sujet, les seuls inconnues sont e et f. on multiplie la matrice avec (x,y,1) ( coord img ) = (x',y',1) (coord ds page).
+	// multiplication matricielle, tout bon.
 	}
 
 	//______________________________________________________________________________________________________________________
@@ -332,6 +368,51 @@
 						 , pt_init_2, pt_current_2
 						 ) {
 		// TO BE DONE
+		
+		
+		var dx = pt_init_2.x - pt_init_1.x;
+		var dy = pt_init_2.y - pt_init_1.y;
+		var dxP = pt_current_2.x - pt_current_1.x;
+		var dyP = pt_current_2.y - pt_current_1.y;
+		
+		var s;
+		var c;
+		var e;
+		var f;
+
+		if (!(dx === 0 && dy === 0)){
+			if (dx === 0 && dy !== 0){
+				s = -(dxP/dy);
+				c = (dyP/dy);
+			}
+			else if (dx !== 0 && dy === 0){
+				s = (dyP/dx);
+				c = (dxP/dx);
+
+			}
+			else if (dx !== 0 && dy !== 0){
+				s = ((dyP/dy) - (dxP/dx)) / ((dy/dx) + (dx/dy));
+				c = (dxP + s * dy)/dx;
+			}
+			e = pt_current_1.x - c * pt_init_1.x + s * pt_init_1.y;
+			f = pt_current_1.y - s * pt_init_1.x - c * pt_init_1.y;
+
+			currentMatrix.a = c;
+			currentMatrix.b = s;
+			currentMatrix.c =-s;
+			currentMatrix.d= c;
+			currentMatrix.e=e;
+			currentMatrix.f=f;
+
+			node.style.transform = "matrix("
+					+ c + ","
+					+ s + ","
+					+ -s + ","
+					+ c + ","
+					+ e + ","
+					+ f + ")";
+		}
+
 	}
 
 	//______________________________________________________________________________________________________________________

@@ -33,7 +33,6 @@ var automataRotoZoom = {
 					 conf.node.style.zIndex = zIndex++;
 				},
 	drag	: function(conf, event, touch) {
-				 // TO BE DONE
 				 switch(event) {
 					 case "release":
 						 console.log("drag release of", touch.identifier);
@@ -53,15 +52,50 @@ var automataRotoZoom = {
 						 break;
 					 case "press":
 						 console.log("drag press with", touch.identifier);
-						 
+					 conf.originalMatrix	= transfo.getMatrixFromString( conf.node.style.transform );
+					 conf.originalMatrixInv	= conf.originalMatrix.inverse();
+					 conf.touchesId[touch.identifier] = {
+						  point : transfo.getPoint(touch.pageX, touch.pageY).matrixTransform( conf.originalMatrixInv ),
+						  currentPoint : transfo.getPoint(touch.pageX, touch.pageY)
+						};
 						 configOfTouchId[ touch.identifier ] = conf;
 						 conf.state = "rotozoom";
 						 break;
 					}
 				},
 	rotozoom: function(conf, event, touch) {
-				 // TO BE DONE
+	//TODO
+
 				 console.log( "automataRotoZoom::rotozoom", conf, event);
+				 switch(event) {
+					 case "release":
+						 console.log("release -rotozoom", touch.identifier);
+						 delete configOfTouchId[touch.identifier];
+						 delete conf.touchesId[touch.identifier];
+					 	 conf.originalMatrix	= transfo.copyMatrix (conf.currentMatrix);
+					 	 conf.originalMatrixInv	= conf.originalMatrix.inverse();
+						 configOfTouchId[ touch.identifier ] = conf;
+						 conf.state = "drag";
+						 break;
+					 case "move":
+						 console.log("move - rotozoom", touch.identifier);
+						 conf.touchesId[touch.identifier].currentPoint.x = touch.pageX;
+						 conf.touchesId[touch.identifier].currentPoint.y = touch.pageY;
+						 
+
+						 transfo.rotoZoomNode( conf.node
+										 , conf.originalMatrix
+										 , conf.currentMatrix
+										 , conf.touchesId[0].point
+										 , conf.touchesId[0].currentPoint
+					 					 , conf.touchesId[1].point
+										 , conf.touchesId[1].currentPoint
+										 );
+						 break;
+					 case "press":
+					 	console.log("3e press - rotozoom - nothing to do", touch.identifier);
+						 break;
+					}
 				}
 };
 

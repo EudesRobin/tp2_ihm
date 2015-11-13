@@ -37,7 +37,6 @@ function dragNode( node
 				 , originalMatrix, point_init_par_rapport_node
 				 , currentMatrix
 				 , x, y) {
-// TO BE DONE > ADD
 	node.style.transform = "matrix("
 					+ currentMatrix.a + ","
 					+ currentMatrix.b + ","
@@ -57,6 +56,51 @@ function rotoZoomNode( node
 					 , pt_init_2, pt_current_2
 					 ) {
 	// TO BE DONE
+	
+	
+	var dx = pt_init_2.x - pt_init_1.x;
+	var dy = pt_init_2.y - pt_init_1.y;
+	var dxP = pt_current_2.x - pt_current_1.x;
+	var dyP = pt_current_2.y - pt_current_1.y;
+	
+	var s;
+	var c;
+	var e;
+	var f;
+
+	if (!(dx === 0 && dy === 0)){
+		if (dx === 0 && dy !== 0){
+			s = -(dxP/dy);
+			c = (dyP/dy);
+		}
+		else if (dx !== 0 && dy === 0){
+			s = (dyP/dx);
+			c = (dxP/dx);
+
+		}
+		else if (dx !== 0 && dy !== 0){
+			s = ((dyP/dy) - (dxP/dx)) / ((dy/dx) + (dx/dy));
+			c = (dxP + s * dy)/dx;
+		}
+		e = pt_current_1.x - c * pt_init_1.x + s * pt_init_1.y;
+		f = pt_current_1.y - s * pt_init_1.x - c * pt_init_1.y;
+
+		currentMatrix.a = c;
+		currentMatrix.b = s;
+		currentMatrix.c =-s;
+		currentMatrix.d= c;
+		currentMatrix.e=e;
+		currentMatrix.f=f;
+
+		node.style.transform = "matrix("
+				+ c + ","
+				+ s + ","
+				+ -s + ","
+				+ c + ","
+				+ e + ","
+				+ f + ")";
+	}
+
 }
 
 //______________________________________________________________________________________________________________________
