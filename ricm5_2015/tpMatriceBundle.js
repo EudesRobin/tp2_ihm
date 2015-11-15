@@ -135,14 +135,18 @@
 						}
 					},
 		rotozoom: function(conf, event, touch) {
-		//TODO
-
 					 console.log( "automataRotoZoom::rotozoom", conf, event);
 					 switch(event) {
 						 case "release":
 							console.log("release -rotozoom", touch.identifier);
 							delete configOfTouchId[touch.identifier];
 							delete conf.touchesId[touch.identifier];
+							if(touch.identifier===conf.doublet[0]){
+								conf.doublet[0]=conf.doublet[1];
+								//delete conf.touchesId[conf.doublet[1]];
+							}//else{
+								//delete conf.touchesId[conf.doublet[1]];
+							//}
 						 	conf.originalMatrix	= transfo.copyMatrix (conf.currentMatrix);
 						 	conf.originalMatrixInv	= conf.originalMatrix.inverse();
 							configOfTouchId[ touch.identifier ] = conf;
