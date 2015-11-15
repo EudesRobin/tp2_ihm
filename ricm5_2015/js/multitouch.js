@@ -29,6 +29,7 @@ var automataRotoZoom = {
 						, currentPoint	: transfo.getPoint(touch.pageX, touch.pageY)
 						};
 					 configOfTouchId[ touch.identifier ] = conf;
+					 // premier membre initial de notre paire
 					 conf.doublet[0]=touch.identifier;
 					 // Next state
 					 conf.state = "drag";
@@ -54,6 +55,7 @@ var automataRotoZoom = {
 						 break;
 					 case "press":
 						 console.log("drag press with", touch.identifier);
+					// on a le second membre de notre paire :)
 				     conf.doublet[1]=touch.identifier;
 					 conf.originalMatrix	= transfo.getMatrixFromString( conf.node.style.transform );
 					 conf.originalMatrixInv	= conf.originalMatrix.inverse();
@@ -75,11 +77,9 @@ var automataRotoZoom = {
 						delete configOfTouchId[touch.identifier];
 						delete conf.touchesId[touch.identifier];
 						if(touch.identifier===conf.doublet[0]){
+							// le second membre la paire courante devient le premier de la future paire
 							conf.doublet[0]=conf.doublet[1];
-							//delete conf.touchesId[conf.doublet[1]];
-						}//else{
-							//delete conf.touchesId[conf.doublet[1]];
-						//}
+						}
 					 	conf.originalMatrix	= transfo.copyMatrix (conf.currentMatrix);
 					 	conf.originalMatrixInv	= conf.originalMatrix.inverse();
 						configOfTouchId[ touch.identifier ] = conf;
