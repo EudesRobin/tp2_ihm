@@ -363,7 +363,7 @@
 						+ (x-originalMatrix.a*point_init_par_rapport_node.x-originalMatrix.c*point_init_par_rapport_node.y) + ","
 						+ (y-originalMatrix.b*point_init_par_rapport_node.x-originalMatrix.d*point_init_par_rapport_node.y) + ")";
 
-	// voir sujet, les seuls inconnues sont e et f. on multiplie la matrice avec (x,y,1) ( coord img ) = (x',y',1) (coord ds page).
+	// voir sujet, les seules inconnues sont e et f. on multiplie la matrice avec (x,y,1) ( coord img ) = (x',y',1) (coord ds page).
 	// multiplication matricielle, tout bon.
 	}
 
@@ -373,7 +373,7 @@
 						 , pt_init_1, pt_current_1
 						 , pt_init_2, pt_current_2
 						 ) {
-		// TO BE DONE
+		
 		
 		
 		var dx = pt_init_2.x - pt_init_1.x;
